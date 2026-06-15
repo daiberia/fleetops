@@ -1,0 +1,10 @@
+charts/
+*.tgz
+.DS_Store
+Thumbs.db
+
+# Terraform providers
+.terraform/
+.terraform.lock.hcl
+
+.terraform/
