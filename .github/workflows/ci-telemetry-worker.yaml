@@ -1,0 +1,113 @@
+# .github/workflows/ci-telemetry-worker.yaml
+name: CI — telemetry-worker
+
+on:
+  push:
+    paths:
+      - 'services/telemetry-worker/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'services/telemetry-worker/**'
+
+env:
+  ACR_NAME: daiberiafleetopsacr
+  IMAGE_NAME: telemetry-worker
+  GITOPS_REPO: daiberia/fleetops-gitops
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: services/telemetry-worker
+        run: |
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        working-directory: services/telemetry-worker
+        run: |
+          flake8 worker/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 worker/ --count --max-line-length=120 --statistics
+
+  sast-trivy:
+    name: SAST — Trivy
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build imagen para escanear
+        working-directory: services/telemetry-worker
+        run: docker build -t telemetry-worker-scan:${{ github.sha }} .
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: telemetry-worker-scan:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          severity: CRITICAL
+          ignore-unfixed: true
+
+  build-and-push:
+    name: Build & Push ACR
+    runs-on: ubuntu-latest
+    needs: sast-trivy
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build & Push
+        working-directory: services/telemetry-worker
+        run: |
+          docker build \
+            -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest \
+            .
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+
+  update-gitops:
+    name: Update GitOps Tag
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout fleetops-gitops
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: fleetops-gitops
+
+      - name: Actualizar image tag
+        run: |
+          sed -i "s|tag:.*|tag: ${{ github.sha }}|g" \
+            fleetops-gitops/apps/telemetry-worker/values.yaml
+
+      - name: Commit y push
+        working-directory: fleetops-gitops
+        run: |
+          git config user.email "ci@daiberia.dev"
+          git config user.name "Daiberia CI"
+          git add apps/telemetry-worker/values.yaml
+          git commit -m "chore: bump telemetry-worker tag to ${{ github.sha }}"
+          git push
