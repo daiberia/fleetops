@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from prometheus_fastapi_instrumentator import Instrumentator
 from app.config import settings
 from app.database import engine, Base
 from app.routers import health, vehicles, telemetry, alerts
@@ -22,6 +22,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Prometheus — expone /metrics con métricas HTTP automáticas
+Instrumentator().instrument(app).expose(app)
 
 # Routers
 app.include_router(health.router)
