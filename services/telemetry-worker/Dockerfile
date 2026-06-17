@@ -1,18 +1,17 @@
-FROM python:3.12-slim
-
+FROM python:3.11-slim
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    gcc \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY services/telemetry-worker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY worker/ ./worker/
+# Worker
+COPY services/telemetry-worker/worker/ ./worker/
 
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+# Modelos compartidos de fleet-api (dependencia directa — deuda técnica conocida)
+COPY services/fleet-api/app/ ./app/
 
 CMD ["python", "-m", "worker.main"]
