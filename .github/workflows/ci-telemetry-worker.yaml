@@ -50,7 +50,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build imagen para escanear
-        run: docker build -t telemetry-worker-scan:${{ github.sha }} services/telemetry-worker
+        run: |
+          docker build \
+            -f services/telemetry-worker/Dockerfile \
+            -t telemetry-worker-scan:${{ github.sha }} \
+            .
 
       - name: Trivy scan
         uses: aquasecurity/trivy-action@v0.36.0
@@ -78,9 +82,9 @@ jobs:
         run: az acr login --name ${{ env.ACR_NAME }}
 
       - name: Build & Push
-        working-directory: services/telemetry-worker
         run: |
           docker build \
+            -f services/telemetry-worker/Dockerfile \
             -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest \
             .
