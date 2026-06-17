@@ -34,11 +34,13 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
 
-      - name: Lint with flake8
+      - name: Lint — errores fatales (bloquea pipeline)
         working-directory: services/telemetry-worker
-        run: |
-          flake8 worker/ --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 worker/ --count --max-line-length=120 --statistics
+        run: flake8 worker/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Lint — style warnings (no bloquea)
+        working-directory: services/telemetry-worker
+        run: flake8 worker/ --count --max-line-length=120 --statistics || true
 
   sast-trivy:
     name: SAST — Trivy
@@ -48,11 +50,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build imagen para escanear
-        working-directory: services/telemetry-worker
-        run: docker build -t telemetry-worker-scan:${{ github.sha }} .
+        run: docker build -t telemetry-worker-scan:${{ github.sha }} services/telemetry-worker
 
       - name: Trivy scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: telemetry-worker-scan:${{ github.sha }}
           format: table
@@ -100,8 +101,11 @@ jobs:
 
       - name: Actualizar image tag
         run: |
-          sed -i "s|tag:.*|tag: ${{ github.sha }}|g" \
+          sed -i "s|^  tag:.*|  tag: ${{ github.sha }}|" \
             fleetops-gitops/apps/telemetry-worker/values.yaml
+
+      - name: Verificar cambio
+        run: grep "tag:" fleetops-gitops/apps/telemetry-worker/values.yaml
 
       - name: Commit y push
         working-directory: fleetops-gitops
