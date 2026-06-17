@@ -8,7 +8,7 @@ resource "azurerm_log_analytics_workspace" "main" {
 
   # PerGB2018 — pago por GB ingestado, más económico para Students
   sku               = "PerGB2018"
-  retention_in_days = 30  # Mínimo para Sentinel, suficiente para demo
+  retention_in_days = 30 # Mínimo para Sentinel, suficiente para demo
 
   tags = var.tags
 }

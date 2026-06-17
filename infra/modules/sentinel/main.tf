@@ -21,8 +21,8 @@ resource "azurerm_sentinel_alert_rule_scheduled" "brute_force_api" {
     | where FailedAttempts > 20
   KQL
 
-  query_frequency = "PT5M"
-  query_period    = "PT5M"
+  query_frequency   = "PT5M"
+  query_period      = "PT5M"
   trigger_operator  = "GreaterThan"
   trigger_threshold = 0
 
@@ -50,8 +50,8 @@ resource "azurerm_sentinel_alert_rule_scheduled" "privilege_escalation" {
     | where HourOfDay < 9 or HourOfDay >= 18
   KQL
 
-  query_frequency = "PT15M"
-  query_period    = "PT15M"
+  query_frequency   = "PT15M"
+  query_period      = "PT15M"
   trigger_operator  = "GreaterThan"
   trigger_threshold = 0
 
@@ -79,8 +79,8 @@ resource "azurerm_sentinel_alert_rule_scheduled" "kubectl_exec_prod" {
     | where ResourceGroup has "fleetops"
   KQL
 
-  query_frequency = "PT5M"
-  query_period    = "PT5M"
+  query_frequency   = "PT5M"
+  query_period      = "PT5M"
   trigger_operator  = "GreaterThan"
   trigger_threshold = 0
 

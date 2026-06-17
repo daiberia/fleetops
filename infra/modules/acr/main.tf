@@ -6,7 +6,7 @@ resource "azurerm_container_registry" "main" {
   name                = var.acr_name
   resource_group_name = var.resource_group_name
   location            = var.location
-  sku                 = "Basic"  # Suficiente para Students, ~0.15$/día
+  sku                 = "Basic" # Suficiente para Students, ~0.15$/día
 
   # Admin credentials desactivadas — acceso solo via Managed Identity
   admin_enabled = false
