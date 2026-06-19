@@ -44,6 +44,9 @@ jobs:
 
       - name: Run tests
         working-directory: services/fleet-api
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+          JWT_SECRET: "test-secret-for-ci-only"
         run: pytest app/tests/ -v
 
   sast-trivy:
