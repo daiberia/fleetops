@@ -2,11 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Base de datos — viene del Key Vault via CSI driver
-    database_url: str = "postgresql://fleetops:password@localhost:5432/fleetops"
-
-    # JWT — viene del Key Vault via CSI driver
-    jwt_secret: str = "dev-secret-change-in-production"
+    # Sin default — si Key Vault/CSI falla, el servicio debe fallar al arrancar,
+    # no caer en un secreto de desarrollo conocido públicamente
+    database_url: str
+    jwt_secret: str
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60
 
