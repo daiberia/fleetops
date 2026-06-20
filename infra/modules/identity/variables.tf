@@ -26,3 +26,13 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "resource_group_id" {
+  description = "ID completo del resource group fleetops, scope del custom role de Terraform CI."
+  type        = string
+}
+
+variable "terraform_ci_sp_object_id" {
+  description = "Object ID (no clientId/appId) del SP daiberia-fleetops-terraform-ci."
+  type        = string
+}
