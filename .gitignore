@@ -8,3 +8,11 @@ Thumbs.db
 .terraform.lock.hcl
 
 .terraform/
+*.tfplan
+tfplan*
+*.tfvars
+*.tfvars.json
+*.tfstate*
+.env
+.env.*
+kubeconfig*
