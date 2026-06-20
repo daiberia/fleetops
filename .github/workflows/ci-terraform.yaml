@@ -64,11 +64,13 @@ jobs:
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
+        env:
+          PLAN_OUTPUT: ${{ steps.plan.outputs.stdout }}
         with:
           script: |
             const output = `#### Terraform Plan 📖
             \`\`\`
-            ${{ steps.plan.outputs.stdout }}
+            ${process.env.PLAN_OUTPUT}
             \`\`\`
             *Pusheado por: @${{ github.actor }}*`;
             github.rest.issues.createComment({

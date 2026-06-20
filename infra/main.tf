@@ -65,12 +65,14 @@ module "keyvault" {
 module "identity" {
   source = "./modules/identity"
 
-  prefix              = local.prefix
-  location            = local.location
-  resource_group_name = azurerm_resource_group.main.name
-  acr_id              = module.acr.acr_id
-  keyvault_id         = module.keyvault.keyvault_id
-  tags                = local.tags
+  prefix                    = local.prefix
+  location                  = local.location
+  resource_group_name       = azurerm_resource_group.main.name
+  acr_id                    = module.acr.acr_id
+  keyvault_id               = module.keyvault.keyvault_id
+  tags                      = local.tags # 
+  resource_group_id         = azurerm_resource_group.main.id
+  terraform_ci_sp_object_id = "e2812c9d-cde5-4be9-b9d0-d71b86548b64"
 }
 
 # 6. AKS — depende de networking, identity y monitoring
