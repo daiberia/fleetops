@@ -75,6 +75,7 @@ module "identity" {
   terraform_ci_sp_object_id = "e2812c9d-cde5-4be9-b9d0-d71b86548b64"
 }
 
+# F3 verificado: SP sin UAA, mínimo privilegio confirmado
 # 6. AKS — depende de networking, identity y monitoring
 module "aks" {
   source = "./modules/aks"
