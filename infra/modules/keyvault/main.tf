@@ -12,11 +12,11 @@ resource "azurerm_key_vault" "main" {
   soft_delete_retention_days = 7
   purge_protection_enabled   = false
 
-  # Durante desarrollo: acceso abierto para que Terraform pueda crear secretos
-  # En producción real se restringe a subnet + IPs corporativas
   network_acls {
-    default_action = "Allow"
-    bypass         = "AzureServices"
+    default_action             = "Deny"
+    bypass                     = "AzureServices"
+    ip_rules                   = var.allowed_ips
+    virtual_network_subnet_ids = [var.aks_subnet_id]
   }
 
   tags = var.tags
@@ -58,3 +58,4 @@ resource "azurerm_key_vault_secret" "db_url" {
   key_vault_id = azurerm_key_vault.main.id
   depends_on   = [azurerm_key_vault_access_policy.terraform]
 }
+

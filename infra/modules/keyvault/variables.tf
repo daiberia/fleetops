@@ -44,3 +44,13 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "allowed_ips" {
+  description = "IPs publicas autorizadas para acceder al plano de datos del Key Vault (tu IP de desarrollo)"
+  type        = list(string)
+}
+
+variable "aks_subnet_id" {
+  description = "ID de la subnet de AKS, para permitir el acceso del CSI driver al Key Vault"
+  type        = string
+}

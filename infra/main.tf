@@ -54,6 +54,8 @@ module "keyvault" {
   location              = local.location
   resource_group_name   = azurerm_resource_group.main.name
   services_subnet_id    = module.networking.services_subnet_id
+  aks_subnet_id         = module.networking.aks_subnet_id
+  allowed_ips           = var.allowed_ips
   identity_principal_id = module.identity.identity_principal_id
   db_password           = var.db_password
   jwt_secret            = var.jwt_secret
