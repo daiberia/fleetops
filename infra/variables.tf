@@ -48,11 +48,8 @@ variable "tags" {
   }
 }
 
-
-
-
-
-
-
-
-
+variable "allowed_ips" {
+  description = "IPs publicas autorizadas para acceder al plano de datos del Key Vault"
+  type        = list(string)
+  default     = []
+}
