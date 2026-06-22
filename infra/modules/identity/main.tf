@@ -29,10 +29,10 @@ resource "azurerm_role_assignment" "managed_identity_operator" {
   principal_id         = azurerm_user_assigned_identity.fleetops.principal_id
 }
 
-# Storage Blob Data Contributor acotado al container tfstate:
-# permite al SP de Terraform CI leer/escribir el state sin listKeys (bypass RBAC)
+# Storage Blob Data Contributor sobre la storage account daiberiatfstate:
+# permite al SP de Terraform CI leer/escribir el state via Azure AD sin listKeys
 resource "azurerm_role_assignment" "terraform_ci_tfstate" {
-  scope                = "${var.tfstate_storage_account_id}/blobServices/default/containers/tfstate"
+  scope                = var.tfstate_storage_account_id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.terraform_ci_sp_object_id
 }
