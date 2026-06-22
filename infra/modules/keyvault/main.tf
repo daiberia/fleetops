@@ -37,25 +37,3 @@ resource "azurerm_key_vault_access_policy" "aks_identity" {
 
   secret_permissions = ["Get", "List"]
 }
-
-resource "azurerm_key_vault_secret" "db_password" {
-  name         = "fleetops-db-password"
-  value        = var.db_password
-  key_vault_id = azurerm_key_vault.main.id
-  depends_on   = [azurerm_key_vault_access_policy.terraform]
-}
-
-resource "azurerm_key_vault_secret" "jwt_secret" {
-  name         = "fleetops-jwt-secret"
-  value        = var.jwt_secret
-  key_vault_id = azurerm_key_vault.main.id
-  depends_on   = [azurerm_key_vault_access_policy.terraform]
-}
-
-resource "azurerm_key_vault_secret" "db_url" {
-  name         = "fleetops-db-url"
-  value        = var.db_url
-  key_vault_id = azurerm_key_vault.main.id
-  depends_on   = [azurerm_key_vault_access_policy.terraform]
-}
-

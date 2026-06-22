@@ -1,5 +1,3 @@
-# modules/identity/variables.tf
-
 variable "prefix" {
   type = string
 }
@@ -34,5 +32,10 @@ variable "resource_group_id" {
 
 variable "terraform_ci_sp_object_id" {
   description = "Object ID (no clientId/appId) del SP daiberia-fleetops-terraform-ci."
+  type        = string
+}
+
+variable "tfstate_storage_account_id" {
+  description = "ID de la storage account daiberiatfstate para acotar el scope del role assignment al container tfstate."
   type        = string
 }

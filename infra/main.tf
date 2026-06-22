@@ -57,9 +57,6 @@ module "keyvault" {
   aks_subnet_id         = module.networking.aks_subnet_id
   allowed_ips           = var.allowed_ips
   identity_principal_id = module.identity.identity_principal_id
-  db_password           = var.db_password
-  jwt_secret            = var.jwt_secret
-  db_url                = var.db_url
   tags                  = local.tags
 }
 
@@ -67,14 +64,15 @@ module "keyvault" {
 module "identity" {
   source = "./modules/identity"
 
-  prefix                    = local.prefix
-  location                  = local.location
-  resource_group_name       = azurerm_resource_group.main.name
-  acr_id                    = module.acr.acr_id
-  keyvault_id               = module.keyvault.keyvault_id
-  tags                      = local.tags # 
-  resource_group_id         = azurerm_resource_group.main.id
-  terraform_ci_sp_object_id = "e2812c9d-cde5-4be9-b9d0-d71b86548b64"
+  prefix                     = local.prefix
+  location                   = local.location
+  resource_group_name        = azurerm_resource_group.main.name
+  acr_id                     = module.acr.acr_id
+  keyvault_id                = module.keyvault.keyvault_id
+  tags                       = local.tags # 
+  resource_group_id          = azurerm_resource_group.main.id
+  terraform_ci_sp_object_id  = "e2812c9d-cde5-4be9-b9d0-d71b86548b64"
+  tfstate_storage_account_id = "/subscriptions/e6715b57-fcfb-4f50-9b7f-53d94ca72561/resourceGroups/daiberia-tfstate-rg/providers/Microsoft.Storage/storageAccounts/daiberiatfstate"
 }
 
 # F3 verificado: SP sin UAA, mínimo privilegio confirmado
