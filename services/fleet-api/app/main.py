@@ -5,9 +5,6 @@ from app.config import settings
 from app.database import engine, Base
 from app.routers import health, vehicles, telemetry, alerts
 
-# Crear tablas en DB si no existen (en producción esto lo hace Alembic)
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
@@ -16,11 +13,20 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# M1: CORS restringido a orígenes conocidos — wildcard eliminado
+# En producción los orígenes vienen de variable de entorno
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in settings.cors_allowed_origins.split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # Prometheus — expone /metrics con métricas HTTP automáticas
