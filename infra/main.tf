@@ -72,7 +72,6 @@ module "identity" {
   tags                       = local.tags # 
   resource_group_id          = azurerm_resource_group.main.id
   terraform_ci_sp_object_id  = "e2812c9d-cde5-4be9-b9d0-d71b86548b64"
-  tfstate_storage_account_id = "/subscriptions/e6715b57-fcfb-4f50-9b7f-53d94ca72561/resourceGroups/daiberia-tfstate-rg/providers/Microsoft.Storage/storageAccounts/daiberiatfstate"
 }
 
 # F3 verificado: SP sin UAA, mínimo privilegio confirmado
