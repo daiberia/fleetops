@@ -36,5 +36,3 @@ resource "azurerm_role_assignment" "terraform_ci_tfstate" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.terraform_ci_sp_object_id
 }
-
-tfstate_storage_account_id = "/subscriptions/e6715b57-fcfb-4f50-9b7f-53d94ca72561/resourceGroups/daiberia-tfstate-rg/providers/Microsoft.Storage/storageAccounts/daiberiatfstate"
