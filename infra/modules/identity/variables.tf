@@ -1,5 +1,3 @@
-# modules/identity/variables.tf
-
 variable "prefix" {
   type = string
 }
