@@ -22,24 +22,6 @@ variable "identity_principal_id" {
   type        = string
 }
 
-variable "db_password" {
-  description = "Password de PostgreSQL — se pasa como variable sensible, nunca hardcodeada"
-  type        = string
-  sensitive   = true
-}
-
-variable "jwt_secret" {
-  description = "Secret para firma de JWT — mínimo 32 caracteres"
-  type        = string
-  sensitive   = true
-}
-
-variable "db_url" {
-  description = "Connection string completa de PostgreSQL"
-  type        = string
-  sensitive   = true
-}
-
 variable "tags" {
   type    = map(string)
   default = {}
