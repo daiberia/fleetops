@@ -30,4 +30,4 @@ def health_check(db: Session = Depends(get_db)):
 
 @router.get("/")
 def root():
-    return {"service": "FleetOps API", "version": "0.1.0", "docs": "/docs"}
+    return {"service": "FleetOps API", "version": "0.1.0", "status": "live"}
