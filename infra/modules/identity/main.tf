@@ -28,3 +28,13 @@ resource "azurerm_role_assignment" "managed_identity_operator" {
   role_definition_name = "Managed Identity Operator"
   principal_id         = azurerm_user_assigned_identity.fleetops.principal_id
 }
+
+# Storage Blob Data Contributor acotado al container tfstate:
+# permite al SP de Terraform CI leer/escribir el state sin listKeys (bypass RBAC)
+resource "azurerm_role_assignment" "terraform_ci_tfstate" {
+  scope                = "${var.tfstate_storage_account_id}/blobServices/default/containers/tfstate"
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.terraform_ci_sp_object_id
+}
+
+tfstate_storage_account_id = "/subscriptions/e6715b57-fcfb-4f50-9b7f-53d94ca72561/resourceGroups/daiberia-tfstate-rg/providers/Microsoft.Storage/storageAccounts/daiberiatfstate"
