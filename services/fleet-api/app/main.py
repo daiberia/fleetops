@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -5,12 +6,19 @@ from app.config import settings
 from app.database import engine, Base
 from app.routers import health, vehicles, telemetry, alerts
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Crea tablas si no existen al arrancar
+    Base.metadata.create_all(bind=engine)
+    yield
+
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description="FleetOps — Fleet Management SaaS API",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # M1: CORS restringido a orígenes conocidos — wildcard eliminado
